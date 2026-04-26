@@ -27,12 +27,21 @@ export function Lightbox() {
 
   if (!name) return null
   return (
-    <div onClick={() => store.closeLightbox()} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-6">
-      <div onClick={e => e.stopPropagation()} className="max-w-6xl w-full grid grid-cols-[1fr_340px] gap-4">
-        <div className="flex flex-col items-center justify-center gap-2">
+    <div
+      onClick={() => store.closeLightbox()}
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center p-6 overflow-y-auto"
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        className="max-w-6xl w-full max-h-[calc(100vh-3rem)] grid grid-cols-1 md:grid-cols-[1fr_340px] gap-4 items-start"
+      >
+        {/* Image column — top-aligned, never centred so it can't drift offscreen
+            when the metadata column is taller than the viewport. Image itself
+            is capped at 80vh and contained so the full frame is always visible. */}
+        <div className="flex flex-col items-start gap-2 min-w-0">
           {url && (name.endsWith('.mp4')
-            ? <video src={url} controls autoPlay loop className="max-h-[85vh] w-auto" />
-            : <img src={url} alt={name} className="max-h-[85vh] w-auto" />)}
+            ? <video src={url} controls autoPlay loop className="max-w-full max-h-[80vh] w-auto h-auto object-contain rounded-md" />
+            : <img src={url} alt={name} className="max-w-full max-h-[80vh] w-auto h-auto object-contain rounded-md" />)}
           {url && (
             <div className="flex gap-2 self-start mt-1">
               <a
@@ -55,7 +64,12 @@ export function Lightbox() {
             </div>
           )}
         </div>
-        <GlassPill shape="card" className="text-sm space-y-2">
+        {/* Metadata column — independently scrollable, never pushes the image
+            out of frame. Capped at viewport height with overflow-y-auto. */}
+        <GlassPill
+          shape="card"
+          className="text-sm space-y-2 overflow-y-auto max-h-[calc(100vh-3rem)]"
+        >
           <div className="font-mono text-xs text-smoke truncate">{name}</div>
           {meta ? (
             <>
@@ -73,7 +87,7 @@ export function Lightbox() {
                 </>
               )}
               <div className="text-xs text-smoke uppercase tracking-widest">prompt</div>
-              <pre className="text-xs whitespace-pre-wrap">{String(meta.prompt ?? '')}</pre>
+              <pre className="text-xs whitespace-pre-wrap break-words">{String(meta.prompt ?? '')}</pre>
             </>
           ) : <div className="text-smoke text-xs">No metadata sidecar.</div>}
         </GlassPill>

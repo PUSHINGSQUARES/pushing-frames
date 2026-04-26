@@ -17,12 +17,43 @@ const shot: Shot = {
 }
 
 describe('composePrompt', () => {
-  it('concatenates camera + lens + action + style, appends negatives', () => {
+  it('leads with the no-text guard so models do not bake metadata as captions', () => {
     const p = composePrompt(pack, shot)
-    expect(p).toContain('ARRI Alexa')
-    expect(p).toContain('24mm T1.5')
+    expect(p.startsWith('Render as a clean photograph')).toBe(true)
+    expect(p).toContain('Do not display any text')
+  })
+
+  it('does not prepend camera+lens+aspect as a caption-style comma list', () => {
+    const p = composePrompt(pack, shot)
+    // The old behaviour was to prepend "ARRI Alexa, 24mm T1.5, 16:9 Wide pit-lane…"
+    // — every image model rendered that as a caption. The action body is
+    // expected to carry camera info via "Shot on …" instead.
+    expect(p).not.toMatch(/ARRI Alexa, 24mm T1\.5, 16:9/)
+  })
+
+  it('includes the action body and style body, in that order', () => {
+    const p = composePrompt(pack, shot)
     expect(p).toContain('Wide pit-lane')
     expect(p).toContain('Kodak Vision3')
-    expect(p).toContain('Negative prompt: deformed car')
+    expect(p.indexOf('Wide pit-lane')).toBeLessThan(p.indexOf('Kodak Vision3'))
+  })
+
+  it('appends an aspect cue as natural language after the style bodies', () => {
+    const p = composePrompt(pack, shot)
+    expect(p).toContain('Composed for a 16:9 frame.')
+    expect(p.indexOf('Composed for a 16:9')).toBeGreaterThan(p.indexOf('Kodak Vision3'))
+  })
+
+  it('appends user negatives plus a baseline anti-text negative', () => {
+    const p = composePrompt(pack, shot)
+    expect(p).toContain('Negative prompt:')
+    expect(p).toContain('rendered text')
+    expect(p).toContain('deformed car')
+  })
+
+  it('still emits the baseline anti-text negative when no user negatives are selected', () => {
+    const noNeg: Shot = { ...shot, negBlocks: [] }
+    const p = composePrompt(pack, noNeg)
+    expect(p).toContain('Negative prompt: rendered text')
   })
 })
