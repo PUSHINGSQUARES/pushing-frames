@@ -52,16 +52,12 @@ export function VideoControls() {
             />
           </>
         )}
-        {providerId === 'veo-3' && (
-          <label className="flex items-center gap-1.5 ml-4 text-xs">
-            <input
-              type="checkbox"
-              checked={!!shot.audio}
-              onChange={e => update({ audio: e.target.checked })}
-            />
-            audio
-          </label>
-        )}
+        {/*
+          Veo audio is currently a no-op — every Veo model we've tested
+          rejects the generateAudio field. Hidden until we figure out the
+          right parameter name / endpoint. The shot.audio state is still
+          preserved on the shot for forwards compatibility.
+        */}
       </div>
       {mode === 'i2v' && (
         <div className="grid grid-cols-2 gap-2">
