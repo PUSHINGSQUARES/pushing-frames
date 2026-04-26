@@ -1,0 +1,13 @@
+{
+  "seedream":     { "perImage": 0.04, "currency": "GBP", "updated": "2026-04-24" },
+  "openai-image": { "low": 0.02, "medium": 0.04, "high": 0.10, "auto": 0.07, "currency": "GBP", "updated": "2026-04-25", "note": "per-tier estimates derived from OpenAI published pricing for gpt-image-1" },
+  "gemini-image": { "perImage": 0.03, "currency": "GBP", "updated": "2026-04-24" },
+  "imagen":       { "perImage": 0.04, "currency": "GBP", "updated": "2026-04-25" },
+  "openrouter":   { "perImage": 0.06, "currency": "GBP", "updated": "2026-04-24" },
+  "seedance": { "perSecondVideo": 0.08, "currency": "GBP", "updated": "2026-04-24", "costModel": "per-second" },
+  "veo-3":    { "perClipVideo": 0.50,  "currency": "GBP", "updated": "2026-04-24", "costModel": "per-clip" },
+  "kling":    {
+    "perSecondByTier": { "v2-master": 0.12, "v2-std": 0.06, "v1-5-std": 0.04 },
+    "currency": "GBP", "updated": "2026-04-24", "costModel": "per-second-tiered"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "seedream":      { "maxRefs": 3, "refFormats": ["image/jpeg", "image/png"], "maxRefBytes": 10485760, "supportsVideo": false, "supportsImage": true,  "viaOpenRouter": false, "maxConcurrent": 2 },
+  "openai-image":  { "maxRefs": 4, "refFormats": ["image/png"],               "maxRefBytes": 4194304,  "supportsVideo": false, "supportsImage": true,  "viaOpenRouter": true,  "maxConcurrent": 4 },
+  "gemini-image":  { "maxRefs": 8, "refFormats": ["image/jpeg", "image/png"], "maxRefBytes": 20971520, "supportsVideo": false, "supportsImage": true,  "viaOpenRouter": true,  "maxConcurrent": 3 },
+  "imagen":        { "maxRefs": 0, "refFormats": ["image/jpeg", "image/png"],  "maxRefBytes": 0,        "supportsVideo": false, "supportsImage": true,  "viaOpenRouter": false, "maxConcurrent": 2 },
+  "openrouter":    { "maxRefs": 4, "refFormats": ["image/png", "image/jpeg"], "maxRefBytes": 4194304,  "supportsVideo": false, "supportsImage": true,  "viaOpenRouter": false, "maxConcurrent": 3 },
+  "seedance": {
+    "maxRefs": 1, "refFormats": ["image/jpeg", "image/png"], "maxRefBytes": 10485760,
+    "supportsVideo": true, "supportsImage": false, "viaOpenRouter": false,
+    "videoModes": ["i2v", "t2v"], "allowedDurations": [5, 10],
+    "supportsEndFrame": false, "supportsMotionSlider": false, "costModel": "per-second",
+    "maxConcurrent": 1
+  },
+  "veo-3": {
+    "maxRefs": 2, "refFormats": ["image/jpeg", "image/png"], "maxRefBytes": 10485760,
+    "supportsVideo": true, "supportsImage": false, "viaOpenRouter": false,
+    "videoModes": ["i2v", "t2v"], "allowedDurations": [8],
+    "supportsEndFrame": true, "supportsMotionSlider": false, "costModel": "per-clip",
+    "maxConcurrent": 1
+  },
+  "kling": {
+    "maxRefs": 2, "refFormats": ["image/jpeg", "image/png"], "maxRefBytes": 10485760,
+    "supportsVideo": true, "supportsImage": false, "viaOpenRouter": false,
+    "videoModes": ["i2v", "t2v"], "allowedDurations": [5, 10],
+    "supportsEndFrame": true, "supportsMotionSlider": true, "costModel": "per-second-tiered",
+    "maxConcurrent": 1
+  }
+}

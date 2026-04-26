@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #0a0a0a;
+  --color-mist: #e8e8e8;
+  --color-smoke: #a8a8a8;
+  --color-haze: rgba(255, 255, 255, 0.06);
+  --color-hairline: rgba(255, 255, 255, 0.08);
+  --color-ink: #e8e8e8;
+  --color-dust: rgba(255, 255, 255, 0.12);
+
+  --font-family-sans: Polymath, Inter, system-ui, sans-serif;
+  --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --blur-glass: 20px;
+  --border-radius-pill: 9999px;
+  --border-radius-glass: 22px;
+
+  --shadow-glass: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background: #0a0a0a;
+  color: #e8e8e8;
+}
+
+body {
+  font-feature-settings: "ss01", "cv01";
+}
+
+.glass {
+  /* Darker tint + stronger blur so text on top of busy gallery imagery
+     stays legible. White overlay was washing into bright thumbs underneath. */
+  background: rgba(10, 10, 10, 0.62);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+.glass-pill {
+  border-radius: 9999px;
+}
+
+.glass-card {
+  border-radius: 22px;
+}
+
+/* Minimum hit target on every button. Tailwind utility classes (px-*, py-*,
+   h-*, w-*) still win, so only the tight underline / icon buttons inflate. */
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+    min-height: 32px;
+    min-width: 32px;
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "seedream": [
+    { "id": "seedream-5-0-260128", "label": "Seedream 5", "tier": "flagship", "default": true, "allowed_resolutions": ["2048x2048", "2560x1440", "1440x2560", "2304x1728", "1728x2304"] },
+    { "id": "seedream-4-5-251128", "label": "Seedream 4.5", "tier": "pro", "allowed_resolutions": ["2048x2048", "2560x1440", "1440x2560", "2304x1728"] },
+    { "id": "seedream-4-0-250828", "label": "Seedream 4", "tier": "std", "allowed_resolutions": ["2048x2048", "2560x1440", "1440x2560"] }
+  ],
+  "openai-image": [
+    { "id": "gpt-image-2", "label": "GPT-Image 2", "tier": "high", "default": true, "allowed_resolutions": ["1024x1024", "1024x1536", "1536x1024"] },
+    { "id": "gpt-image-2-2026-04-21", "label": "GPT-Image 2 (2026-04-21)", "tier": "high", "allowed_resolutions": ["1024x1024", "1024x1536", "1536x1024"] },
+    { "id": "gpt-image-1.5", "label": "GPT-Image 1.5", "tier": "medium", "allowed_resolutions": ["1024x1024", "1024x1536", "1536x1024"] },
+    { "id": "gpt-image-1", "label": "GPT-Image 1", "tier": "medium", "allowed_resolutions": ["1024x1024", "1024x1536", "1536x1024"] },
+    { "id": "gpt-image-1-mini", "label": "GPT-Image 1 Mini", "tier": "low", "allowed_resolutions": ["1024x1024", "1024x1536", "1536x1024"] },
+    { "id": "chatgpt-image-latest", "label": "ChatGPT Image (latest)", "tier": "auto", "allowed_resolutions": ["1024x1024", "1024x1536", "1536x1024"] }
+  ],
+  "gemini-image": [
+    { "id": "gemini-2.5-flash-image", "label": "Nano Banana (Gemini 2.5 Flash Image)", "tier": "flash", "default": true, "allowed_resolutions": ["auto"] },
+    { "id": "gemini-3-pro-image-preview", "label": "Nano Banana Pro", "tier": "pro", "allowed_resolutions": ["auto"] },
+    { "id": "gemini-3.1-flash-image-preview", "label": "Nano Banana 2", "tier": "flash-2", "allowed_resolutions": ["auto"] }
+  ],
+  "imagen": [
+    { "id": "imagen-4.0-generate-001", "label": "Imagen 4", "tier": "standard", "default": true, "allowed_resolutions": ["1024x1024", "1536x1024", "1024x1536", "1365x1024", "1024x1365"] },
+    { "id": "imagen-4.0-ultra-generate-001", "label": "Imagen 4 Ultra", "tier": "ultra", "allowed_resolutions": ["1024x1024", "1536x1024", "1024x1536", "1365x1024", "1024x1365"] },
+    { "id": "imagen-4.0-fast-generate-001", "label": "Imagen 4 Fast", "tier": "fast", "allowed_resolutions": ["1024x1024", "1536x1024", "1024x1536"] }
+  ],
+  "openrouter": [
+    { "id": "google/gemini-2.5-flash-image", "label": "Nano Banana via OpenRouter", "tier": "flash", "default": true, "allowed_resolutions": ["auto"] },
+    { "id": "openai/gpt-5.4-image-2", "label": "GPT-image-2 via OpenRouter", "tier": "high", "allowed_resolutions": ["1024x1024", "1024x1536", "1536x1024"] }
+  ],
+  "seedance": [
+    { "id": "dreamina-seedance-2-0-260128",      "label": "Seedance 2",       "tier": "pro", "default": true },
+    { "id": "dreamina-seedance-2-0-fast-260128", "label": "Seedance 2 Fast",  "tier": "fast" },
+    { "id": "seedance-1-5-pro-251215",           "label": "Seedance 1.5 Pro", "tier": "legacy-pro" }
+  ],
+  "veo-3": [
+    { "id": "veo-3.1-generate-preview",      "label": "Veo 3.1 Preview",      "tier": "preview", "default": true },
+    { "id": "veo-3.1-fast-generate-preview", "label": "Veo 3.1 Fast Preview", "tier": "fast-preview" },
+    { "id": "veo-3.1-lite-generate-preview", "label": "Veo 3.1 Lite Preview", "tier": "lite-preview" },
+    { "id": "veo-3.0-generate-001",          "label": "Veo 3.0",              "tier": "stable" },
+    { "id": "veo-3.0-fast-generate-001",     "label": "Veo 3.0 Fast",         "tier": "fast-stable" },
+    { "id": "veo-2.0-generate-001",          "label": "Veo 2",                "tier": "v2" }
+  ],
+  "kling": [
+    { "id": "kling-v2-master", "label": "Kling v2 Master",   "tier": "master", "default": true },
+    { "id": "kling-v2-std",    "label": "Kling v2 Standard", "tier": "std" },
+    { "id": "kling-v1-5-std",  "label": "Kling v1.5 Standard", "tier": "std-legacy" }
+  ]
+}
