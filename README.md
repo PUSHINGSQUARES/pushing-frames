@@ -2,6 +2,9 @@
 
 # PUSHING FRAMES_
 
+![PUSHING FRAMES_ in use — gallery view showing three lanes side by side: automotive editorial, editorial portraiture, nightlife agency edit](docs/gallery.png)
+
+
 Local, bring-your-own-keys cinematic prompt studio. Image and video generation across Seedream, Seedance, GPT-image-2, Gemini 3 Flash Image, Imagen, Veo 3, Kling, and OpenRouter—behind one cinematic-first UI.
 
 The pack is the product. Every project is a markdown file you can read, edit, remix, commit to git, share. Twelve years of cinematography compressed into style blocks and shot templates. The tool is the delivery mechanism.
