@@ -40,21 +40,15 @@ export class Veo3Adapter implements ProviderAdapter {
       ? requested
       : (requested === '9:16' || requested.startsWith('9:')) ? '9:16' : '16:9'
 
-    // generateAudio is only supported on certain Veo models. Even the audio-
-    // capable ones reject the field when set to false, and the rest reject
-    // it outright. So: only attach when the user explicitly opted in AND
-    // the selected model is on the audio allowlist. Otherwise drop silently.
-    const AUDIO_CAPABLE_MODELS = new Set([
-      'veo-3.1-generate-preview',
-      'veo-3.0-generate-001',
-    ])
+    // generateAudio is rejected by every Veo model we've tested — the
+    // allowlist that "should" accept it (3.1-preview, 3.0-stable) returns
+    // 400 in practice. Until we figure out the right parameter name /
+    // endpoint, drop it entirely. The UI's audio checkbox is currently a
+    // no-op for Veo; documented in the next turn.
     const parameters: Record<string, unknown> = {
       durationSeconds: opts.durationSec ?? 8,
       aspectRatio,
       resolution: '720p',
-    }
-    if (opts.audio === true && AUDIO_CAPABLE_MODELS.has(opts.model)) {
-      parameters.generateAudio = true
     }
 
     const key = this.getKey()

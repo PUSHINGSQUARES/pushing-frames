@@ -48,11 +48,13 @@ export class KlingAdapter implements ProviderAdapter {
       cfg_scale: opts.motion ?? 0.5,
       mode: /master/.test(opts.model) ? 'pro' : 'std',
     }
+    // Kling expects raw base64, not a data URL. blobToDataUrl returns
+    // "data:image/png;base64,xxx" so strip the prefix before sending.
     if (mode === 'i2v' && opts.startFrame) {
-      body.image = await blobToDataUrl(opts.startFrame)
+      body.image = stripDataUrlPrefix(await blobToDataUrl(opts.startFrame))
     }
     if (mode === 'i2v' && opts.endFrame) {
-      body.image_tail = await blobToDataUrl(opts.endFrame)
+      body.image_tail = stripDataUrlPrefix(await blobToDataUrl(opts.endFrame))
     }
 
     const submitRes = await fetch(endpoint, {
@@ -85,6 +87,13 @@ export class KlingAdapter implements ProviderAdapter {
     const cost = this.estimate(shot, opts).costGBP
     return { bytes, mimeType: 'video/mp4', costGBP: cost, durationMs: performance.now() - t0, providerMeta: { model: opts.model, taskId } }
   }
+}
+
+function stripDataUrlPrefix(dataUrl: string): string {
+  // Strip "data:<mime>;base64," and return raw base64. Kling's API rejects
+  // the data URL form with "File is not in a valid base64 format".
+  const i = dataUrl.indexOf('base64,')
+  return i >= 0 ? dataUrl.slice(i + 'base64,'.length) : dataUrl
 }
 
 async function blobToDataUrl(ref: NormalisedRef): Promise<string> {
