@@ -23,31 +23,49 @@ export function Gallery() {
     project.listGenerations().then(n => store.setGenerations(n))
   }, [project])
 
+  // Persist URLs across re-renders so we don't revoke blobs that the
+  // user is still hovering. The previous version revoked everything
+  // 1s after each names change — when a new generation finished, all
+  // existing tiles' blob URLs were nuked, surfacing as ERR_FILE_NOT_FOUND
+  // on the video tiles whose poster blob just got revoked mid-hover.
+  const urlsRef = useRef<Record<string, string>>({})
   useEffect(() => {
     if (!project) return
     let cancelled = false
-    const created: string[] = []
     ;(async () => {
-      const map: Record<string, string> = {}
+      const next: Record<string, string> = { ...urlsRef.current }
+      // Build URLs for any new names we don't already have
       for (const name of names) {
+        if (next[name]) continue
         try {
           const blob = await project.readGeneration(name)
           if (name.endsWith('.mp4')) {
-            // Extract poster frame via <video> element (browser only; returns null in jsdom)
             const poster = await extractPoster(blob)
-            if (poster) { map[name] = poster; created.push(poster) }
+            if (poster) next[name] = poster
           } else {
-            const u = URL.createObjectURL(blob); map[name] = u; created.push(u)
+            next[name] = URL.createObjectURL(blob)
           }
         } catch { /* skip */ }
       }
-      if (!cancelled) setUrls(map)
+      // Revoke URLs whose name has been deleted from the list
+      const live = new Set(names)
+      for (const [name, url] of Object.entries(urlsRef.current)) {
+        if (!live.has(name)) {
+          URL.revokeObjectURL(url)
+          delete next[name]
+        }
+      }
+      urlsRef.current = next
+      if (!cancelled) setUrls(next)
     })()
-    return () => {
-      cancelled = true
-      setTimeout(() => created.forEach(u => URL.revokeObjectURL(u)), 1000)
-    }
+    return () => { cancelled = true }
   }, [names, project])
+
+  // Revoke everything once on unmount.
+  useEffect(() => () => {
+    Object.values(urlsRef.current).forEach(u => URL.revokeObjectURL(u))
+    urlsRef.current = {}
+  }, [])
 
   return (
     <div className="absolute top-20 bottom-24 left-[17.5rem] right-3 z-10 flex flex-col gap-2">
@@ -155,8 +173,13 @@ function VideoTile({ posterUrl, project, name }: { posterUrl?: string; project: 
       muted
       loop
       playsInline
-      onMouseEnter={async e => { await loadSrc(); e.currentTarget.play().catch(() => {}) }}
-      onMouseLeave={e => e.currentTarget.pause()}
+      onMouseEnter={async () => {
+        await loadSrc()
+        // After the await, the synthetic event's currentTarget can be null
+        // if the element re-rendered. Use the ref instead — survives re-renders.
+        videoRef.current?.play().catch(() => {})
+      }}
+      onMouseLeave={() => videoRef.current?.pause()}
       className="w-full aspect-square object-cover"
     />
   )
