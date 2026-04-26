@@ -26,7 +26,20 @@ const corsProxyPlugin = {
         if (!PROXY_ALLOWED_SUFFIXES.some(s => host === s || host.endsWith('.' + s))) {
           res.statusCode = 403; res.end('host not allowed'); return
         }
-        const upstream = await fetch(target, { redirect: 'follow' })
+        // Forward client request headers (notably Authorization for Veo
+        // signed downloads). Strip headers that confuse fetch's outbound
+        // request — host/origin/referer/cookie shouldn't go upstream as-is.
+        const fwdHeaders: Record<string, string> = {}
+        for (const [k, v] of Object.entries(req.headers)) {
+          const key = k.toLowerCase()
+          if (['host', 'origin', 'referer', 'cookie', 'connection', 'content-length'].includes(key)) continue
+          if (typeof v === 'string') fwdHeaders[k] = v
+        }
+        const upstream = await fetch(target, {
+          method: req.method ?? 'GET',
+          headers: fwdHeaders,
+          redirect: 'follow',
+        })
         res.statusCode = upstream.status
         upstream.headers.forEach((v, k) => {
           if (['transfer-encoding', 'content-encoding', 'connection'].includes(k.toLowerCase())) return

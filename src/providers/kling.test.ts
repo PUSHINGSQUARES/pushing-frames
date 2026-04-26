@@ -20,7 +20,7 @@ describe('KlingAdapter', () => {
   it('includes image_tail when end-frame provided', async () => {
     const fetchSpy = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ data: { task_id: 't-1' } }), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ data: { task_status: 'succeed', videos: [{ url: 'https://x/k.mp4' }] } }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: { task_status: 'succeed', task_result: { videos: [{ url: 'https://x/k.mp4' }] } } }), { status: 200 }))
       .mockResolvedValueOnce(new Response(new Uint8Array([0, 0]), { status: 200 }))
     vi.stubGlobal('fetch', fetchSpy)
 

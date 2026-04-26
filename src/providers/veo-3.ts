@@ -69,9 +69,25 @@ export class Veo3Adapter implements ProviderAdapter {
     const videoUri = await pollUntilDone(async () => {
       const r = await fetch(`${BASE}/${opName}?key=${encodeURIComponent(key)}`, { signal })
       if (!r.ok) throw new Error(`veo-3 status: HTTP ${r.status}`)
-      const s = await r.json() as { done?: boolean; response?: { videos: { uri: string }[] }; error?: { message: string } }
+      // Veo LRO response shape varies by API version. Handle both:
+      //   (a) response.videos[0].uri  — older shape
+      //   (b) response.generateVideoResponse.generatedSamples[0].video.uri  — current
+      // Older code only checked (a); when API returned (b) the poll never
+      // saw "done" and ran forever.
+      const s = await r.json() as {
+        done?: boolean
+        response?: {
+          videos?: { uri: string }[]
+          generateVideoResponse?: {
+            generatedSamples?: { video?: { uri?: string } }[]
+          }
+        }
+        error?: { message: string }
+      }
       if (s.error) throw new Error(`veo-3: ${s.error.message}`)
-      if (s.done && s.response?.videos?.[0]?.uri) return { done: true, result: s.response.videos[0].uri }
+      const uri = s.response?.videos?.[0]?.uri
+        ?? s.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri
+      if (s.done && uri) return { done: true, result: uri }
       return { done: false }
     }, onProgress, signal, { initialDelayMs: 3000, maxDelayMs: 15_000 })
 

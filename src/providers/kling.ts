@@ -89,10 +89,24 @@ export class KlingAdapter implements ProviderAdapter {
         signal,
       })
       if (!r.ok) throw new Error(`kling status: HTTP ${r.status}`)
-      const s = await r.json() as { data: { task_status: string; videos?: { url: string }[] } }
-      if (s.data.task_status === 'succeed' && s.data.videos?.[0]?.url) return { done: true, result: s.data.videos[0].url }
-      if (s.data.task_status === 'failed') throw new Error('kling: task failed')
-      return { done: false, message: s.data.task_status }
+      // Kling response shape: { data: { task_status, task_result: { videos: [{url}] } } }
+      // Older code was reading data.videos directly which is undefined,
+      // so the poll never saw "done" and ran forever.
+      const s = await r.json() as {
+        data: {
+          task_status: string
+          task_status_msg?: string
+          task_result?: { videos?: { url: string }[] }
+        }
+      }
+      const status = s.data.task_status
+      if (status === 'succeed' && s.data.task_result?.videos?.[0]?.url) {
+        return { done: true, result: s.data.task_result.videos[0].url }
+      }
+      if (status === 'failed') {
+        throw new Error(`kling: task failed${s.data.task_status_msg ? ` — ${s.data.task_status_msg}` : ''}`)
+      }
+      return { done: false, message: status }
     }, onProgress, signal, { initialDelayMs: 5000, maxDelayMs: 15_000 })
 
     const videoRes = await fetch(videoUrl, { signal })
