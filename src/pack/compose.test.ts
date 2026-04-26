@@ -56,4 +56,11 @@ describe('composePrompt', () => {
     const p = composePrompt(pack, noNeg)
     expect(p).toContain('Negative prompt: rendered text')
   })
+
+  it('uses a video-flavoured lead when shot.video_mode is set, so video models are not pushed toward stills', () => {
+    const videoShot: Shot = { ...shot, video_mode: 'i2v' }
+    const p = composePrompt(pack, videoShot)
+    expect(p.startsWith('Render as a clean cinematic video clip')).toBe(true)
+    expect(p).not.toContain('Render as a clean photograph')
+  })
 })
