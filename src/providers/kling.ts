@@ -6,7 +6,10 @@ import { pollUntilDone } from './video_poll'
 import { KlingJwtCache } from './kling_auth'
 import { readVendorKey } from '@/vault/vendor_keys'
 
-const BASE = 'https://api.klingai.com/v1'
+// In dev the Vite proxy forwards POST + headers + body to api.klingai.com
+// because Kling doesn't return CORS headers for direct browser requests.
+// In production builds (Tauri / hosted) hit the API directly.
+const BASE = import.meta.env.DEV ? '/api/kling/v1' : 'https://api.klingai.com/v1'
 
 export class KlingAdapter implements ProviderAdapter {
   id = 'kling' as const

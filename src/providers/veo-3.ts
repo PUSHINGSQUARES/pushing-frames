@@ -40,15 +40,22 @@ export class Veo3Adapter implements ProviderAdapter {
       ? requested
       : (requested === '9:16' || requested.startsWith('9:')) ? '9:16' : '16:9'
 
-    // Only attach generateAudio when the user has explicitly opted in. Older
-    // Veo models (2.0, some 3.0 stable variants) reject the field outright
-    // and 400 if it's present, even when set to false.
+    // generateAudio is only supported on certain Veo models. Even the audio-
+    // capable ones reject the field when set to false, and the rest reject
+    // it outright. So: only attach when the user explicitly opted in AND
+    // the selected model is on the audio allowlist. Otherwise drop silently.
+    const AUDIO_CAPABLE_MODELS = new Set([
+      'veo-3.1-generate-preview',
+      'veo-3.0-generate-001',
+    ])
     const parameters: Record<string, unknown> = {
       durationSeconds: opts.durationSec ?? 8,
       aspectRatio,
       resolution: '720p',
     }
-    if (opts.audio === true) parameters.generateAudio = true
+    if (opts.audio === true && AUDIO_CAPABLE_MODELS.has(opts.model)) {
+      parameters.generateAudio = true
+    }
 
     const key = this.getKey()
     const submitRes = await fetch(`${BASE}/models/${opts.model}:predictLongRunning?key=${encodeURIComponent(key)}`, {

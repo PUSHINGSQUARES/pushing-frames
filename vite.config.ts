@@ -52,6 +52,15 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api\/ark/, '/api/v3'),
       },
+      // Kling API doesn't return CORS headers for direct browser requests.
+      // Forward POST + headers + body server-side in dev. In Tauri / production,
+      // calls go direct (Tauri has its own CORS handling, server-side proxies
+      // can replace this).
+      '/api/kling': {
+        target: 'https://api.klingai.com',
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/api\/kling/, ''),
+      },
     },
   },
   test: {
