@@ -40,14 +40,29 @@ export class KlingAdapter implements ProviderAdapter {
     const mode = opts.mode ?? 'i2v'
     const endpoint = mode === 'i2v' ? `${BASE}/videos/image2video` : `${BASE}/videos/text2video`
 
+    // Kling caps prompt + negative_prompt at 2500 chars each. Our composed
+    // prompt regularly exceeds that with the no-text lead + action body +
+    // style block bodies + aspect cue + negative section. Split at the
+    // "Negative prompt:" boundary so positive and negative travel in their
+    // own fields, then truncate each to fit Kling's limit.
+    const KLING_PROMPT_LIMIT = 2500
+    const NEG_MARKER = '\n\nNegative prompt:'
+    const fullPrompt = shot.prompt
+    const negIdx = fullPrompt.indexOf(NEG_MARKER)
+    const positivePrompt = (negIdx >= 0 ? fullPrompt.slice(0, negIdx) : fullPrompt).slice(0, KLING_PROMPT_LIMIT)
+    const negativePrompt = negIdx >= 0
+      ? fullPrompt.slice(negIdx + NEG_MARKER.length).trim().slice(0, KLING_PROMPT_LIMIT)
+      : ''
+
     const body: Record<string, unknown> = {
       model_name: opts.model,
-      prompt: shot.prompt,
+      prompt: positivePrompt,
       duration: String(opts.durationSec ?? 5),
       aspect_ratio: shot.aspect ?? '16:9',
       cfg_scale: opts.motion ?? 0.5,
       mode: /master/.test(opts.model) ? 'pro' : 'std',
     }
+    if (negativePrompt) body.negative_prompt = negativePrompt
     // Kling expects raw base64, not a data URL. blobToDataUrl returns
     // "data:image/png;base64,xxx" so strip the prefix before sending.
     if (mode === 'i2v' && opts.startFrame) {
