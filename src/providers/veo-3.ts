@@ -91,10 +91,12 @@ export class Veo3Adapter implements ProviderAdapter {
       return { done: false }
     }, onProgress, signal, { initialDelayMs: 3000, maxDelayMs: 15_000 })
 
-    const videoRes = await fetch(corsProxy(videoUri), {
-      headers: { Authorization: `Bearer ${key}` },
-      signal,
-    })
+    // Veo's download URL authenticates via ?key= query param, not Bearer
+    // header (Bearer is for OAuth tokens, the Gemini API uses raw API
+    // keys in the URL — same as the polling endpoint above).
+    const sep = videoUri.includes('?') ? '&' : '?'
+    const downloadUrl = `${videoUri}${sep}key=${encodeURIComponent(key)}`
+    const videoRes = await fetch(corsProxy(downloadUrl), { signal })
     if (!videoRes.ok) throw new Error(`veo-3: video download HTTP ${videoRes.status}`)
     const bytes = new Uint8Array(await videoRes.arrayBuffer())
     onProgress({ stage: 'complete' })
